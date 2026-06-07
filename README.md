@@ -1,5 +1,7 @@
 # 🎓 CollegeFinder – Smart College Discovery Platform
 
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+
 CollegeFinder is a modern full-stack web application that helps students discover, compare, and evaluate colleges across India. The platform provides personalized recommendations, fit-score analysis, admission insights, and comparison tools to help students make informed higher education decisions.
 
 ---
@@ -193,7 +195,7 @@ Add screenshots of:
 
 ## 📄 License
 
-This project is developed for educational and portfolio purposes.
+This project is licensed under the MIT License. See the LICENSE file for details.
 
 ---
 
