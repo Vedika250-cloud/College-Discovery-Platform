@@ -1,41 +1,200 @@
-<<<<<<< HEAD
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎓 CollegeFinder – Smart College Discovery Platform
 
-## Getting Started
+CollegeFinder is a modern full-stack web application that helps students discover, compare, and evaluate colleges across India. The platform provides personalized recommendations, fit-score analysis, admission insights, and comparison tools to help students make informed higher education decisions.
 
-First, run the development server:
+---
+
+## 🚀 Features
+
+### 🔍 College Discovery
+
+* Browse colleges across India
+* Search and filter colleges by:
+
+  * State
+  * Course
+  * Fees
+  * Ownership Type
+  * Placement Statistics
+
+### 📊 Personalized Fit Score
+
+* Analyze student-college compatibility
+* Generate personalized recommendations
+* Visual fit score and matching insights
+
+### ⚖️ College Comparison
+
+* Compare multiple colleges side-by-side
+* Evaluate:
+
+  * Fees
+  * Placements
+  * Rankings
+  * Facilities
+  * Campus Culture
+
+### ❤️ Saved Colleges
+
+* Save favorite colleges
+* Create a personalized shortlist
+* Access saved colleges from the dashboard
+
+### 👤 Student Profile Management
+
+* Personal Information
+* Academic Information
+* Entrance Exam Scores
+* College Preferences
+* Editable profile settings
+
+### 📈 Dashboard
+
+* Personalized recommendations
+* Saved colleges overview
+* Recent activity
+* Profile completion tracking
+
+### 🌙 Dark & Light Mode
+
+* Modern responsive UI
+* Theme persistence
+* Consistent design system
+
+---
+
+## 🛠️ Tech Stack
+
+### Frontend
+
+* Next.js 16
+* React
+* TypeScript
+* Tailwind CSS
+* Framer Motion
+* Shadcn/UI
+
+### Backend
+
+* Next.js API Routes
+* Prisma ORM
+
+### Database
+
+* PostgreSQL / SQLite (Development)
+
+### Authentication
+
+* NextAuth.js
+
+---
+
+## 📂 Project Structure
+
+```bash
+src/
+├── app/
+│   ├── dashboard/
+│   ├── colleges/
+│   ├── compare/
+│   ├── fit-score/
+│   ├── profile/
+│   ├── settings/
+│   └── api/
+│
+├── components/
+│   ├── college/
+│   ├── layout/
+│   ├── profile/
+│   ├── dashboard/
+│   └── ui/
+│
+├── lib/
+├── prisma/
+└── public/
+```
+
+## ⚙️ Installation
+
+### Clone Repository
+
+```bash
+git clone https://github.com/YOUR_USERNAME/College-Discovery-Platform.git
+cd College-Discovery-Platform
+```
+
+### Install Dependencies
+
+```bash
+npm install
+```
+
+### Configure Environment Variables
+
+Create a `.env` file:
+
+```env
+DATABASE_URL="your_database_url"
+NEXTAUTH_SECRET="your_secret"
+NEXTAUTH_URL="http://localhost:3000"
+```
+
+### Run Database Setup
+
+```bash
+npx prisma generate
+npx prisma migrate dev
+```
+
+### Start Development Server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```text
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 🎯 Future Enhancements
 
-To learn more about Next.js, take a look at the following resources:
+* AI-powered college recommendations
+* Admission chance prediction
+* Scholarship finder
+* College reviews and ratings
+* Student community forums
+* Application tracking dashboard
+* Real-time cutoff analysis
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📸 Screenshots
 
-## Deploy on Vercel
+Add screenshots of:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+* Landing Page
+* Dashboard
+* College Comparison
+* Fit Score Analysis
+* Profile Page
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-=======
-# College-Discovery-Platform
-A full-stack Next.js college discovery platform featuring personalized recommendations, admission chance prediction, college comparison, saved colleges, student profiles, and intelligent fit-score analysis for Indian higher education.
->>>>>>> 9f66f6b61c4169981f7bbcebbbaec6735b80eead
+---
+
+## 🤝 Contributors
+
+* Vedika Singh
+* Team Members (Add Names Here)
+
+---
+
+## 📄 License
+
+This project is developed for educational and portfolio purposes.
+
+---
+
+⭐ If you found this project useful, consider giving it a star on GitHub.
