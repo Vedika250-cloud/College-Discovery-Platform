@@ -38,6 +38,8 @@ export default function OnboardingPage() {
  catPercentile: "",
  matScore: "",
  xatPercentile: "",
+ gateScore: "",
+ otherExams: "",
  },
  preferences: {
  coursePreference: "",
@@ -89,7 +91,7 @@ export default function OnboardingPage() {
  <div className="w-full max-w-3xl">
  <div className="mb-8">
  <h1 className="text-3xl font-bold text-foreground mb-2">Welcome to CollegeFinder</h1>
- <p className="text-muted-foreground">Let's set up your profile to find the perfect colleges for you.</p>
+ <p className="text-muted-foreground">We&apos;re preparing your personalized dashboard based on your profile.</p>
  </div>
 
  <div className="flex justify-between mb-8 relative">
@@ -182,7 +184,7 @@ export default function OnboardingPage() {
  {currentStep === 2 && (
  <div className="space-y-6">
  <h2 className="text-2xl font-bold text-foreground mb-2">Entrance Exams</h2>
- <p className="text-sm text-muted-foreground mb-6">Only fill out the exams you have taken or plan to take.</p>
+ <p className="text-sm text-muted-foreground mt-1">Tell us about yourself so we can personalize your experience.</p>
  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[40vh] overflow-y-auto pr-2">
  <div className="space-y-1">
  <label className="text-xs font-medium text-muted-foreground">JEE Main Percentile</label>
@@ -211,6 +213,14 @@ export default function OnboardingPage() {
  <div className="space-y-1">
  <label className="text-xs font-medium text-muted-foreground">CUET Score</label>
  <input type="number" className="w-full p-2.5 rounded-lg border border-border bg-background text-foreground focus:ring-2 focus:ring-primary outline-none" value={formData.exams.cuetScore} onChange={e => updateExam('cuetScore', e.target.value)} placeholder="e.g. 750" />
+ </div>
+ <div className="space-y-1">
+ <label className="text-xs font-medium text-muted-foreground">GATE Score</label>
+ <input type="number" className="w-full p-2.5 rounded-lg border border-border bg-background text-foreground focus:ring-2 focus:ring-primary outline-none" value={formData.exams.gateScore} onChange={e => updateExam('gateScore', e.target.value)} placeholder="e.g. 800" />
+ </div>
+ <div className="space-y-1 md:col-span-2">
+ <label className="text-xs font-medium text-muted-foreground">Other Exams (Comma separated)</label>
+ <input type="text" className="w-full p-2.5 rounded-lg border border-border bg-background text-foreground focus:ring-2 focus:ring-primary outline-none" value={formData.exams.otherExams} onChange={e => updateExam('otherExams', e.target.value)} placeholder="e.g. NID DAT, NIFT" />
  </div>
  </div>
  </div>
@@ -258,8 +268,8 @@ export default function OnboardingPage() {
  <select className="w-full p-3 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary outline-none" value={formData.preferences.hostelRequired} onChange={e => updatePreference('hostelRequired', e.target.value)}>
  <option value="">Select Option</option>
  <option value="Yes">Yes, absolutely</option>
- <option value="No">No, I'll manage</option>
- <option value="Flexible">Doesn't matter</option>
+ <option value="No">No, I&apos;ll manage</option>
+ <option value="Flexible">Doesn&apos;t matter</option>
  </select>
  </div>
  <div className="space-y-2">

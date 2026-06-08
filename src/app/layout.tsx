@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { CompareTray } from "@/components/CompareTray";
+import { AICounselor } from "@/components/AICounselor";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -27,6 +28,7 @@ export default function RootLayout({
  >
  {children}
  <CompareTray />
+ <AICounselor />
  </ThemeProvider>
  </body>
  </html>

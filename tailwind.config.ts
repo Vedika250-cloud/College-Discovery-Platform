@@ -1,0 +1,47 @@
+import type { Config } from "tailwindcss";
+
+const config: Config = {
+  content: [
+    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+  ],
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        background: "var(--background)",
+        foreground: "var(--foreground)",
+        primary: {
+          DEFAULT: "#4F46E5",
+          foreground: "#ffffff",
+        },
+        accent: {
+          DEFAULT: "#8B5CF6",
+          foreground: "#ffffff",
+        },
+        card: {
+          DEFAULT: "var(--card)",
+          foreground: "var(--card-foreground)",
+        },
+        popover: {
+          DEFAULT: "var(--popover)",
+          foreground: "var(--popover-foreground)",
+        },
+        muted: {
+          DEFAULT: "var(--muted)",
+          foreground: "var(--muted-foreground)",
+        },
+        border: "var(--border)",
+        input: "var(--input)",
+      },
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
+      },
+    },
+  },
+  plugins: [],
+};
+export default config;

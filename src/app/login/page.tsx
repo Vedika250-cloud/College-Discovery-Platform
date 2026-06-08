@@ -7,14 +7,22 @@ import { useAppStore } from "@/lib/store";
 export default function LoginPage() {
  const [isSignUp, setIsSignUp] = useState(false);
  const router = useRouter();
- const { login } = useAppStore();
+  const { login, hasCompletedOnboarding } = useAppStore();
 
- const handleSubmit = (e: React.FormEvent) => {
- e.preventDefault();
- login();
- document.cookie = "isAuthenticated=true; path=/";
- router.push("/dashboard");
- };
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    login();
+    document.cookie = "isAuthenticated=true; path=/";
+    
+    if (isSignUp) {
+      router.push("/onboarding");
+    } else {
+      if (hasCompletedOnboarding) {
+        document.cookie = "hasCompletedOnboarding=true; path=/";
+      }
+      router.push("/dashboard");
+    }
+  };
 
  return (
  <div className="min-h-screen flex items-center justify-center bg-background px-4">

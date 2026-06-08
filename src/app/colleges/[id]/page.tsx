@@ -6,7 +6,9 @@ import { colleges } from "@/lib/data";
 import { calculateFitScore } from "@/lib/utils";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Heart, ArrowLeft, BarChart2, Check, MapPin, Building, GraduationCap, IndianRupee, Trophy, Info, TrendingUp } from "lucide-react";
+import { Heart, BarChart2, Check, MapPin, Building, GraduationCap, IndianRupee, Trophy, Info, TrendingUp, Target, Activity } from "lucide-react";
+import { BackButton } from "@/components/ui/BackButton";
+import { CollegeAnalytics } from "@/components/CollegeAnalytics";
 
 export default function CollegeDetailsPage() {
  const params = useParams();
@@ -37,9 +39,9 @@ export default function CollegeDetailsPage() {
  <Navbar />
  
  <main className="flex-1 max-w-7xl mx-auto px-4 py-8 w-full">
- <Link href="/colleges" className="text-sm text-muted-foreground hover:text-primary flex items-center gap-1 mb-6">
- <ArrowLeft size={16} /> Back to Search
- </Link>
+ <div className="mb-6">
+ <BackButton label="Back to Search" fallbackRoute="/colleges" />
+ </div>
 
  {/* Header Section */}
  <div className="bg-card border border-border rounded-3xl p-8 mb-8 relative overflow-hidden">
@@ -61,7 +63,13 @@ export default function CollegeDetailsPage() {
  </div>
  </div>
 
- <div className="flex gap-3 w-full md:w-auto">
+ <div className="flex flex-wrap gap-3 w-full md:w-auto">
+ <Link 
+   href="/predictor"
+   className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-medium transition-colors bg-blue-50 text-blue-600 border border-blue-200 hover:bg-blue-100 dark:bg-blue-900/20 dark:border-blue-900/50 dark:hover:bg-blue-900/40"
+ >
+   <Target size={20} /> Check Chances
+ </Link>
  <button 
  onClick={() => toggleSaveCollege(college.id)}
  className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-medium transition-colors ${
@@ -194,9 +202,16 @@ export default function CollegeDetailsPage() {
  )}
  </div>
  </div>
- </main>
+
+  {/* Analytics Section */}
+  <div className="mt-8">
+    <div className="flex items-center gap-2 mb-6">
+      <Activity className="text-primary" size={28} />
+      <h2 className="text-3xl font-bold">Analytics & Trends</h2>
+    </div>
+    <CollegeAnalytics college={college} />
+  </div>
+  </main>
  </div>
  );
 }
-
-

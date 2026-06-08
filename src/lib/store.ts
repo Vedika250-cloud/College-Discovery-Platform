@@ -1,9 +1,11 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { colleges } from "@/lib/data";
 
 
 export interface UserProfile {
- name: string;
+  profileImage?: string;
+  name: string;
  email: string;
  phone: string;
  city: string;
@@ -22,6 +24,8 @@ export interface UserProfile {
  catPercentile: string;
  matScore: string;
  xatPercentile: string;
+ gateScore: string;
+ otherExams: string;
  };
  preferences: {
  coursePreference: string;
@@ -31,6 +35,17 @@ export interface UserProfile {
  hostelRequired: string;
  placementExpectation: string;
  };
+}
+
+export type ApplicationStatus = "Not Started" | "Applying" | "Submitted" | "Under Review" | "Accepted" | "Rejected";
+
+export interface Application {
+ id: string;
+ collegeId: string;
+ status: ApplicationStatus;
+ notes: string;
+ deadline: string;
+ dateAdded: string;
 }
 
 export interface Notification {
@@ -46,6 +61,9 @@ interface AppState {
  login: () => void;
  logout: () => void;
  completeOnboarding: () => void;
+ 
+ isAICounselorOpen: boolean;
+ setAICounselorOpen: (open: boolean) => void;
  
  profile: UserProfile | null;
  updateProfile: (profile: UserProfile) => void;
@@ -64,40 +82,71 @@ interface AppState {
  markAllNotificationsRead: () => void;
  deleteNotification: (id: string) => void;
  clearAllNotifications: () => void;
+
+ applications: Application[];
+ addApplication: (app: Omit<Application, "id" | "dateAdded">) => void;
+ updateApplication: (id: string, updates: Partial<Application>) => void;
+ deleteApplication: (id: string) => void;
 }
 
 export const useAppStore = create<AppState>()(
  persist(
- (set) => ({
+ (set, get) => ({
  isAuthenticated: false,
  hasCompletedOnboarding: false,
+ isAICounselorOpen: false,
+ setAICounselorOpen: (open) => set({ isAICounselorOpen: open }),
  login: () => set({ isAuthenticated: true }),
  logout: () => {
  document.cookie = "isAuthenticated=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
  document.cookie = "hasCompletedOnboarding=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
  set({ isAuthenticated: false, hasCompletedOnboarding: false });
  },
- completeOnboarding: () => set({ hasCompletedOnboarding: true }),
+ completeOnboarding: () => {
+   const state = get();
+   state.addNotification("Profile completed successfully");
+   state.addNotification("New recommendations generated based on your profile");
+   state.addNotification("2 new scholarships matched your profile");
+   set({ hasCompletedOnboarding: true });
+ },
 
  profile: null,
  updateProfile: (profile) => set({ profile }),
 
  savedColleges: [],
- toggleSaveCollege: (id) =>
- set((state) => ({
- savedColleges: state.savedColleges.includes(id)
- ? state.savedColleges.filter((c) => c !== id)
- : [...state.savedColleges, id],
- })),
+ toggleSaveCollege: (id) => {
+   const state = get();
+   const isSaved = state.savedColleges.includes(id);
+   if (!isSaved) {
+     const college = colleges.find(c => c.id === id);
+     if (college) {
+       state.addNotification(`You saved ${college.name}`);
+     }
+   }
+   set({
+     savedColleges: isSaved
+     ? state.savedColleges.filter((c) => c !== id)
+     : [...state.savedColleges, id],
+   });
+ },
 
  compareColleges: [],
- addToCompare: (id) =>
- set((state) => ({
- compareColleges:
- state.compareColleges.length < 3 && !state.compareColleges.includes(id)
- ? [...state.compareColleges, id]
- : state.compareColleges,
- })),
+ addToCompare: (id) => {
+   const state = get();
+   const isCompared = state.compareColleges.includes(id);
+   if (!isCompared && state.compareColleges.length < 3) {
+     const college = colleges.find(c => c.id === id);
+     if (college) {
+       state.addNotification(`Added ${college.name} to comparison`);
+     }
+   }
+   set({
+     compareColleges:
+     state.compareColleges.length < 3 && !isCompared
+     ? [...state.compareColleges, id]
+     : state.compareColleges,
+   });
+ },
  removeFromCompare: (id) =>
  set((state) => ({
  compareColleges: state.compareColleges.filter((c) => c !== id),
@@ -127,6 +176,20 @@ export const useAppStore = create<AppState>()(
  notifications: state.notifications.filter((n) => n.id !== id),
  })),
  clearAllNotifications: () => set({ notifications: [] }),
+
+ applications: [],
+ addApplication: (app) => set((state) => {
+   state.addNotification(`Application created`);
+   return {
+     applications: [...state.applications, { ...app, id: Date.now().toString(), dateAdded: new Date().toISOString() }]
+   };
+ }),
+ updateApplication: (id, updates) => set((state) => ({
+   applications: state.applications.map(app => app.id === id ? { ...app, ...updates } : app)
+ })),
+ deleteApplication: (id) => set((state) => ({
+   applications: state.applications.filter(app => app.id !== id)
+ })),
  }),
  {
  name: "college-discovery-storage",

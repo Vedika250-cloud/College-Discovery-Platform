@@ -3,8 +3,9 @@
 import { Navbar } from "@/components/Navbar";
 import { useAppStore } from "@/lib/store";
 import { colleges } from "@/lib/data";
-import { X, ArrowLeft } from "lucide-react";
+import { X } from "lucide-react";
 import Link from "next/link";
+import { BackButton } from "@/components/ui/BackButton";
 
 export default function ComparePage() {
  const { compareColleges, removeFromCompare, clearCompare } = useAppStore();
@@ -17,10 +18,10 @@ export default function ComparePage() {
  
  <main className="flex-1 max-w-7xl mx-auto px-4 py-8 w-full">
  <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
- <div>
- <Link href="/colleges" className="text-sm text-muted-foreground hover:text-primary flex items-center gap-1 mb-2">
- <ArrowLeft size={16} /> Back to Colleges
- </Link>
+      <div className="mb-4">
+        <BackButton label="Back to Dashboard" fallbackRoute="/dashboard" />
+      </div>
+      <div>
  <h1 className="text-3xl font-bold">Compare Colleges</h1>
  </div>
  
