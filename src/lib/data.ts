@@ -31,6 +31,7 @@ export interface College {
   establishedYear: number;
   courses: string[];
   fees: number;
+  cutoff?: string;
   placements: number;
   highestPackage: number;
   rankings: number;

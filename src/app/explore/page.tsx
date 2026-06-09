@@ -13,7 +13,7 @@ export default function ExplorePage() {
 
   const stateColleges = useMemo(() => {
     if (!selectedState) return [];
-    return colleges.filter(c => c.location.includes(selectedState));
+    return colleges.filter(c => c.state === selectedState);
   }, [selectedState]);
 
   // Sort by ranking/placements for "Top Colleges"

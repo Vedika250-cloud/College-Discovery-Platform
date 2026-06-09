@@ -35,12 +35,12 @@ function CollegesContent() {
 
   // Extract unique options for dropdowns
   const uniqueStates = useMemo(() => {
-    const states = colleges.map(c => c.location.split(",").pop()?.trim() || "").filter(Boolean);
+    const states = colleges.map(c => c.state || "").filter(Boolean);
     return Array.from(new Set(states)).sort();
   }, []);
 
   const uniqueCities = useMemo(() => {
-    const cities = colleges.map(c => c.location.split(", ")[0] || "").filter(Boolean);
+    const cities = colleges.map(c => c.city || "").filter(Boolean);
     return Array.from(new Set(cities)).sort();
   }, []);
 
@@ -68,8 +68,7 @@ function CollegesContent() {
 
       // State filter
       if (filterState) {
-        const collegeState = college.location.split(",").pop()?.trim();
-        if (collegeState !== filterState.trim()) return false;
+        if (college.state !== filterState) return false;
       }
 
       // Course filter
@@ -93,8 +92,7 @@ function CollegesContent() {
 
       // City filter
       if (filterCity) {
-        const collegeCity = college.location.split(", ")[0];
-        if (collegeCity !== filterCity) return false;
+        if (college.city !== filterCity) return false;
       }
 
       // Placement filter
