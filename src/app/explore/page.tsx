@@ -2,24 +2,50 @@
 
 import { useState, useMemo } from "react";
 import { Navbar } from "@/components/Navbar";
-import { IndiaGridMap } from "@/components/IndiaGridMap";
+import { InteractiveIndiaMap, StateStats } from "@/components/InteractiveIndiaMap";
 import { colleges } from "@/lib/data";
-import { Map as MapIcon, Navigation, Building2, MapPin, ArrowRight, TrendingUp } from "lucide-react";
-import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
+import { Map as MapIcon, Navigation, Building2, Search, BookOpen, GraduationCap } from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function ExplorePage() {
-  const [selectedState, setSelectedState] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const stateColleges = useMemo(() => {
-    if (!selectedState) return [];
-    return colleges.filter(c => c.state === selectedState);
-  }, [selectedState]);
+  const stateDataMap = useMemo(() => {
+    const data: Record<string, StateStats & { totalRating: number }> = {};
+    
+    colleges.forEach(c => {
+      let stateName = c.state;
+      // Merge Ladakh into J&K so the map path correctly shows their combined stats
+      if (stateName === "Ladakh") stateName = "Jammu and Kashmir";
 
-  // Sort by ranking/placements for "Top Colleges"
-  const topColleges = useMemo(() => {
-    return [...stateColleges].sort((a, b) => a.rankings - b.rankings).slice(0, 3);
-  }, [stateColleges]);
+      if (!data[stateName]) {
+        data[stateName] = { name: stateName, total: 0, gov: 0, pvt: 0, topCollege: c.name, totalRating: 0, avgRating: 0 };
+      }
+      
+      data[stateName].total++;
+      if (c.ownership === "Public") {
+        data[stateName].gov++;
+      } else {
+        data[stateName].pvt++;
+      }
+
+      data[stateName].totalRating += (c.rating || 0);
+      data[stateName].avgRating = Number((data[stateName].totalRating / data[stateName].total).toFixed(1));
+      
+      // Update top college if current is better ranked (lower number is better)
+      const currentTop = colleges.find(tc => tc.name === data[stateName].topCollege);
+      if (currentTop && c.rankings < currentTop.rankings) {
+        data[stateName].topCollege = c.name;
+      }
+    });
+    
+    return data;
+  }, []);
+
+  const totalStates = Object.keys(stateDataMap).length;
+  const totalColleges = colleges.length;
+  const totalGov = colleges.filter(c => c.ownership === "Public").length;
+  const totalPvt = colleges.filter(c => c.ownership === "Private").length;
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -31,108 +57,94 @@ export default function ExplorePage() {
           <div className="inline-flex items-center justify-center p-3 bg-primary/10 text-primary rounded-full mb-6">
             <MapIcon size={28} />
           </div>
-          <h1 className="text-4xl sm:text-5xl font-bold text-foreground mb-4">Explore India</h1>
+          <h1 className="text-4xl sm:text-5xl font-bold text-foreground mb-4">India College Heatmap</h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Discover top colleges across different states. Use the interactive map below to explore regional opportunities.
+            Discover top institutions geographically. Hover over any state to view statistics, or click to explore its colleges.
           </p>
         </div>
       </div>
 
-      <main className="flex-1 max-w-7xl mx-auto px-4 py-12 w-full flex flex-col xl:flex-row gap-8">
+      <main className="flex-1 max-w-7xl mx-auto px-4 py-8 w-full flex flex-col gap-8">
         
-        {/* Map Section */}
-        <div className="flex-1 bg-card border border-border rounded-3xl p-6 lg:p-10 shadow-sm flex flex-col items-center justify-center">
-          <h2 className="text-2xl font-bold mb-8 text-center flex items-center gap-2">
-            <Navigation className="text-primary" size={24} /> Select a Region
-          </h2>
-          <IndiaGridMap 
-            selectedState={selectedState} 
-            onStateSelect={setSelectedState} 
+        {/* Statistics Cards */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="bg-card border border-border rounded-2xl p-6 shadow-sm flex flex-col items-center text-center">
+            <Navigation className="text-primary mb-3" size={24} />
+            <span className="text-3xl font-bold text-foreground">{totalStates}</span>
+            <span className="text-sm text-muted-foreground mt-1">States Covered</span>
+          </div>
+          <div className="bg-card border border-border rounded-2xl p-6 shadow-sm flex flex-col items-center text-center">
+            <Building2 className="text-blue-500 mb-3" size={24} />
+            <span className="text-3xl font-bold text-foreground">{totalColleges}</span>
+            <span className="text-sm text-muted-foreground mt-1">Total Colleges</span>
+          </div>
+          <div className="bg-card border border-border rounded-2xl p-6 shadow-sm flex flex-col items-center text-center">
+            <BookOpen className="text-emerald-500 mb-3" size={24} />
+            <span className="text-3xl font-bold text-foreground">{totalGov}</span>
+            <span className="text-sm text-muted-foreground mt-1">Govt Colleges</span>
+          </div>
+          <div className="bg-card border border-border rounded-2xl p-6 shadow-sm flex flex-col items-center text-center">
+            <GraduationCap className="text-purple-500 mb-3" size={24} />
+            <span className="text-3xl font-bold text-foreground">{totalPvt}</span>
+            <span className="text-sm text-muted-foreground mt-1">Private Colleges</span>
+          </div>
+        </div>
+
+        {/* Map Controls */}
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 bg-card border border-border rounded-2xl p-4 shadow-sm">
+          <div className="relative w-full sm:w-80">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
+            <input
+              type="text"
+              placeholder="Highlight a state..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 border border-border rounded-xl bg-background focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground transition-all"
+            />
+          </div>
+          
+          <div className="flex items-center gap-4">
+            <span className="text-sm font-medium text-muted-foreground">Density:</span>
+            <div className="flex items-center gap-1.5">
+              <div className="w-3 h-3 rounded-sm border border-border" style={{ backgroundColor: '#1E293B' }} title="0 Colleges"></div>
+              <span className="text-[10px] sm:text-xs text-muted-foreground">0</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: '#4338CA' }} title="1-5 Colleges"></div>
+              <span className="text-[10px] sm:text-xs text-muted-foreground">1-5</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: '#6366F1' }} title="6-10 Colleges"></div>
+              <span className="text-[10px] sm:text-xs text-muted-foreground">6-10</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: '#818CF8' }} title="11-20 Colleges"></div>
+              <span className="text-[10px] sm:text-xs text-muted-foreground">11-20</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: '#A78BFA' }} title="21-30 Colleges"></div>
+              <span className="text-[10px] sm:text-xs text-muted-foreground">21-30</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: '#C084FC' }} title="30+ Colleges"></div>
+              <span className="text-[10px] sm:text-xs text-muted-foreground">30+</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Interactive Map */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="w-full"
+        >
+          <InteractiveIndiaMap 
+            data={stateDataMap} 
+            highlightedState={searchQuery}
+            setHighlightedState={setSearchQuery}
           />
-        </div>
-
-        {/* State Details Panel */}
-        <div className="w-full xl:w-[400px] shrink-0">
-          <AnimatePresence mode="wait">
-            {!selectedState ? (
-              <motion.div 
-                key="empty"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="h-full bg-card border border-border border-dashed rounded-3xl p-10 flex flex-col items-center justify-center text-center text-muted-foreground"
-              >
-                <MapPin size={48} className="mb-4 opacity-20" />
-                <h3 className="text-xl font-bold text-foreground mb-2">No State Selected</h3>
-                <p>Click on any state in the grid map to view its top colleges and statistics.</p>
-              </motion.div>
-            ) : (
-              <motion.div 
-                key="details"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="h-full bg-card border border-border rounded-3xl overflow-hidden shadow-sm flex flex-col"
-              >
-                <div className="bg-primary p-8 text-primary-foreground relative overflow-hidden">
-                  <MapPin size={120} className="absolute -right-10 -bottom-10 opacity-10" />
-                  <h2 className="text-3xl font-bold mb-2 relative z-10">{selectedState}</h2>
-                  <div className="inline-flex items-center gap-2 bg-white/20 px-3 py-1 rounded-full text-sm font-medium relative z-10">
-                    <Building2 size={16} /> {stateColleges.length} Colleges Available
-                  </div>
-                </div>
-
-                <div className="p-6 flex-1 flex flex-col">
-                  {stateColleges.length === 0 ? (
-                    <div className="flex-1 flex flex-col items-center justify-center text-center text-muted-foreground py-10">
-                      <Building2 size={32} className="mb-3 opacity-20" />
-                      <p>No colleges listed in our database for this state yet.</p>
-                    </div>
-                  ) : (
-                    <>
-                      <div className="flex items-center justify-between mb-6">
-                        <h3 className="font-bold text-lg flex items-center gap-2">
-                          <TrendingUp size={20} className="text-primary" /> Top Colleges
-                        </h3>
-                      </div>
-                      
-                      <div className="space-y-4 mb-8">
-                        {topColleges.map((college, idx) => (
-                          <Link 
-                            key={college.id} 
-                            href={`/colleges/${college.id}`}
-                            className="block p-4 border border-border rounded-2xl hover:border-primary/50 hover:bg-muted/50 transition-colors group"
-                          >
-                            <div className="flex items-center gap-3">
-                              <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-sm shrink-0">
-                                #{idx + 1}
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <h4 className="font-semibold text-foreground truncate group-hover:text-primary transition-colors">
-                                  {college.name}
-                                </h4>
-                                <p className="text-xs text-muted-foreground truncate">{college.location}</p>
-                              </div>
-                            </div>
-                          </Link>
-                        ))}
-                      </div>
-
-                      <div className="mt-auto">
-                        <Link 
-                          href={`/colleges?state=${encodeURIComponent(selectedState)}`}
-                          className="flex items-center justify-center gap-2 w-full py-4 bg-primary text-primary-foreground rounded-2xl font-bold hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20"
-                        >
-                          View All in {selectedState} <ArrowRight size={18} />
-                        </Link>
-                      </div>
-                    </>
-                  )}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
+        </motion.div>
+        
       </main>
     </div>
   );

@@ -13,11 +13,11 @@ const config: Config = {
         background: "var(--background)",
         foreground: "var(--foreground)",
         primary: {
-          DEFAULT: "#4F46E5",
+          DEFAULT: "#6366F1",
           foreground: "#ffffff",
         },
         accent: {
-          DEFAULT: "#8B5CF6",
+          DEFAULT: "#A855F7",
           foreground: "#ffffff",
         },
         card: {
