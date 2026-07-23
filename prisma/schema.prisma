@@ -1,0 +1,99 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  extensions = [vector]
+}
+
+model College {
+  id              String   @id @default(uuid())
+  name            String
+  slug            String   @unique
+  location        String
+  state           String
+  city            String?
+  ownership       String?  // Public, Private
+  establishedYear Int?
+  courses         String[] // Stored as array of strings
+  fees            Int?
+  placements      Int?     // Avg placement
+  highestPackage  Int?
+  rankings        Int?
+  rating          Float?
+  description     String?
+  hostelAvailability Boolean @default(false)
+  website         String?
+  logo            String?
+  gallery         String[]
+  reviews         String[]
+  cutoff          String?
+
+  // Embedding for semantic search (RAG)
+  embedding       Unsupported("vector(768)")?
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Scholarship {
+  id                    String   @id @default(uuid())
+  name                  String
+  state                 String?  // "All India" or specific state
+  provider              String?  // "Government", "Private", "NGO"
+  amount                String?
+  eligibility           String?  // Text description
+  income_limit          Int?     // Max family income in INR
+  category              String?  // "Merit based", "Need based", etc.
+  gender                String?  // "Any", "Female", etc.
+  minority_status       Boolean  @default(false)
+  reserved_category     String[] // e.g., ["SC", "ST", "OBC"]
+  disability_eligibility Boolean @default(false)
+  academic_requirements String?
+  minimum_marks         Int?     // Percentage
+  required_documents    String[]
+  application_dates     String?
+  official_website      String?
+  renewal_rules         String?
+  course_level          String[] // ["UG", "PG", "Diploma"]
+  status                String   @default("Open") // "Open", "Closed"
+  
+  // Embedding for semantic search (RAG)
+  embedding             Unsupported("vector(768)")?
+
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
+
+model KnowledgeDocument {
+  id          String   @id @default(uuid())
+  title       String
+  content     String
+  category    String   // e.g., "FAQ", "Admissions", "Rankings"
+  
+  // Embedding for semantic search (RAG)
+  embedding   Unsupported("vector(768)")?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ChatSession {
+  id        String        @id @default(uuid())
+  title     String?
+  messages  ChatMessage[]
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+model ChatMessage {
+  id            String      @id @default(uuid())
+  sessionId     String
+  session       ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  role          String      // "user", "assistant", "system"
+  content       String
+  sources       Json?       // Store sources used for RAG
+  createdAt     DateTime    @default(now())
+}
